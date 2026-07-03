@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -12,6 +15,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
         goarch: [amd64, arm64]
     steps:
@@ -24,9 +28,8 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Install Xcode Command Line Tools
-        run: |
-          xcode-select --install || true
+      - name: Run tests
+        run: go test ./internal/...
 
       - name: Build macOS binary
         env:

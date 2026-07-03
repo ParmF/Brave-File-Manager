@@ -1,0 +1,6 @@
+/dist/
+/bravefm
+/bravefm-*
+*.exe
+*.test
+*.out

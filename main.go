@@ -3,7 +3,7 @@ package main
 import (
 	"fyne.io/fyne/v2/app"
 
-	"github.com/yourusername/brave-file-manager/internal/ui"
+	"github.com/asnasn/Brave-File-Manager/internal/ui"
 )
 
 func main() {

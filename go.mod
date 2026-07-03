@@ -1,4 +1,4 @@
-module github.com/yourusername/brave-file-manager
+module github.com/asnasn/Brave-File-Manager
 
 go 1.26
 

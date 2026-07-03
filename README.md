@@ -18,8 +18,8 @@ A powerful, elegant, and open-source file manager for macOS (Apple Silicon & Int
 2. **Install Fyne dependencies** (see https://developer.fyne.io/started/)
 3. **Clone and build:**
    ```bash
-   git clone https://github.com/yourusername/brave-file-manager.git
-   cd brave-file-manager
+   git clone https://github.com/asnasn/Brave-File-Manager.git
+   cd Brave-File-Manager
    go run .
    ```
 
