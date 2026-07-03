@@ -68,12 +68,11 @@ Build for macOS:
 CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -o bravefm .
 ```
 
-Create a local `.app` bundle and DMG (requires [Fyne CLI](https://docs.fyne.io/started/install.html)):
+Create a local `.app` bundle and DMG:
 
 ```bash
-go install fyne.io/fyne/v2/cmd/fyne@v2.6.1
-fyne package -os darwin -arch arm64 -name "Brave File Manager" -release
-hdiutil create -volname "Brave File Manager" -srcfolder "Brave File Manager.app" -ov -format UDZO BraveFileManager.dmg
+chmod +x scripts/package-macos.sh
+scripts/package-macos.sh arm64 0.0.0 BraveFileManager.dmg
 ```
 
 ## Releases
