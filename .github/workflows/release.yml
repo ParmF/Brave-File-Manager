@@ -12,7 +12,21 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Run tests
+        run: go test ./internal/...
+
   build-macos:
+    needs: test
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -28,21 +42,57 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Run tests
-        run: go test ./internal/...
+      - name: Install Fyne CLI
+        run: go install fyne.io/fyne/v2/cmd/fyne@v2.6.1
 
-      - name: Build macOS binary
+      - name: Resolve version from tag
+        run: echo "APP_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Package macOS app and DMG
         env:
           CGO_ENABLED: 1
           GOOS: darwin
           GOARCH: ${{ matrix.goarch }}
         run: |
           mkdir -p dist
-          go build -o dist/bravefm-darwin-${{ matrix.goarch }} .
+          "$(go env GOPATH)/bin/fyne" package \
+            -os darwin \
+            -arch ${{ matrix.goarch }} \
+            -name "Brave File Manager" \
+            -app-version "$APP_VERSION" \
+            -release
 
-      - name: Upload Release Asset
+          hdiutil create \
+            -volname "Brave File Manager" \
+            -srcfolder "Brave File Manager.app" \
+            -ov -format UDZO \
+            "dist/BraveFileManager-darwin-${{ matrix.goarch }}.dmg"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg-${{ matrix.goarch }}
+          path: dist/*.dmg
+          if-no-files-found: error
+
+  release:
+    needs: build-macos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download DMG artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List release files
+        run: ls -lh dist/
+
+      - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/bravefm-darwin-*
+          files: dist/*.dmg
+          generate_release_notes: true
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

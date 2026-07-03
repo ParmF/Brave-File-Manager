@@ -1,0 +1,12 @@
+Website = "https://github.com/ParmF/Brave-File-Manager"
+
+[Darwin]
+  CFBundleName = "Brave File Manager"
+  CFBundleDisplayName = "Brave File Manager"
+  CFBundleIdentifier = "com.parmf.bravefilemanager"
+
+[Linux]
+  GenericName = "File Manager"
+
+[Windows]
+  FileDescription = "Brave File Manager"
